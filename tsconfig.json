@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "include": [],
+  "references": [
+    { "path": "./packages/build" },
+    { "path": "./packages/performance-profile-parser-worker" },
+    { "path": "./packages/e2e" },
+    { "path": "./packages/extension" }
+  ]
+}

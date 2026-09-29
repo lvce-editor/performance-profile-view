@@ -1,0 +1,51 @@
+{
+  "name": "builtin.performance-profile-view",
+  "version": "0.0.0-dev",
+  "description": "Chromium performance trace viewer extension for Lvce Editor",
+  "main": "dist/performanceProfileViewMain.js",
+  "type": "module",
+  "author": "Lvce Editor",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --unhandled-rejections=warn --experimental-vm-modules ../../node_modules/jest/bin/jest.js --detectOpenHandles --forceExit"
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/parts/PerformanceProfileViewInstance/**/*.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 85,
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
+    },
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
+    "injectGlobals": false,
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    },
+    "testMatch": [
+      "**/test/**"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "useESM": true
+        }
+      ]
+    }
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.4.1",
+    "@lvce-editor/api": "^9.19.0",
+    "@lvce-editor/virtual-dom-worker": "^11.12.2",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.12"
+  }
+}
