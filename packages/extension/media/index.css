@@ -20,7 +20,8 @@
   font-weight: 600;
 }
 
-.PerformanceProfileNotice {
+.PerformanceProfileNotice,
+.PerformanceProfileFilterStatus {
   padding: 8px 16px;
   color: var(--DescriptionForeground, rgba(128, 128, 128, 1));
 }
@@ -80,4 +81,14 @@
   .PerformanceProfileEventDetail {
     display: none;
   }
+}
+
+.PerformanceProfileFilter {
+  box-sizing: border-box;
+  width: calc(100% - 32px);
+  margin: 8px 16px;
+  padding: 6px;
+  color: inherit;
+  background: var(--InputBoxBackground, transparent);
+  border: 1px solid var(--PanelBorder, gray);
 }
