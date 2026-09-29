@@ -6,6 +6,7 @@ export interface PerformanceProfileEvent {
   readonly name: string
   readonly pid: number
   readonly processName: string
+  readonly source?: string
   readonly start: number
   readonly threadName: string
   readonly tid: number
@@ -108,6 +109,15 @@ const readName = (raw: RawEvent): string => {
   return typeof raw.name === 'string' && raw.name ? raw.name : '(unnamed event)'
 }
 
+const getSource = (raw: RawEvent): string | undefined => {
+  if (!isRecord(raw.args)) {
+    return undefined
+  }
+  const data = isRecord(raw.args.data) ? raw.args.data : undefined
+  const url = data?.url ?? raw.args.fileName
+  return typeof url === 'string' && url ? url : undefined
+}
+
 const createProfileEvent = (
   state: ParseState,
   record: EventRecord,
@@ -117,7 +127,9 @@ const createProfileEvent = (
   category: string,
 ): PerformanceProfileEvent => {
   const { pid, tid } = record
+  const source = getSource(record.raw)
   return {
+    ...(source && { source }),
     category,
     duration,
     name,

@@ -6,6 +6,7 @@ interface PerformanceProfileEvent {
   readonly duration: number
   readonly name: string
   readonly processName: string
+  readonly source?: string
   readonly start: number
   readonly threadName: string
 }
@@ -47,6 +48,7 @@ const eventTrackNode = {
   type: VirtualDomElements.Svg,
   viewBox: '0 0 100 10',
 }
+const handleInput = 'handleInput'
 const summaryNode = { childCount: 1, className: 'PerformanceProfileSummary', type: VirtualDomElements.Div }
 const noticeNode = { childCount: 1, className: 'PerformanceProfileNotice', type: VirtualDomElements.Div }
 
@@ -60,8 +62,8 @@ const renderEvent = (event: PerformanceProfileEvent, traceStart: number, traceDu
     { ...eventNode, childCount: 5 },
     eventNameNode,
     text(event.name),
-    eventDetailNode,
-    text(detail),
+    { ...eventDetailNode, title: event.source || detail },
+    text(event.source ? `${detail} · ${event.source}` : detail),
     eventTrackNode,
     {
       childCount: 0,
@@ -80,13 +82,38 @@ const renderEvent = (event: PerformanceProfileEvent, traceStart: number, traceDu
   ]
 }
 
-const render = (profile: PerformanceProfile): readonly VirtualDomNode[] => {
-  const visibleEvents = profile.events.slice(0, 5000)
+const render = (profile: PerformanceProfile, filter: string): readonly VirtualDomNode[] => {
+  const query = filter.toLowerCase()
+  const matchingEvents = query
+    ? profile.events.filter((event) =>
+        [event.name, event.category, event.processName, event.threadName, event.source ?? ''].some((value) =>
+          value.toLowerCase().includes(query),
+        ),
+      )
+    : profile.events
+  const visibleEvents = matchingEvents.slice(0, 5000)
   const traceStart = profile.events[0]?.start ?? 0
   const traceDuration = Math.max(profile.duration, 1)
   const heading = `Chromium performance trace · ${profile.events.length.toLocaleString()} events · ${formatTime(profile.duration)} total`
   const parts = [
     [summaryNode, text(heading)],
+    [
+      {
+        ariaLabel: 'Filter trace events',
+        childCount: 0,
+        className: 'PerformanceProfileFilter',
+        inputType: 'search',
+        name: 'filter',
+        onInput: handleInput,
+        placeholder: 'Filter events, workers, or source URLs',
+        type: VirtualDomElements.Input,
+        value: filter,
+      },
+    ],
+    [
+      { ...noticeNode, className: 'PerformanceProfileFilterStatus' },
+      text(`${matchingEvents.length.toLocaleString()} matching events`),
+    ],
     ...(profile.ignoredEventCount
       ? [
           [
@@ -99,12 +126,12 @@ const render = (profile: PerformanceProfile): readonly VirtualDomNode[] => {
       { childCount: visibleEvents.length, className: 'PerformanceProfileEventList', type: VirtualDomElements.Div },
       ...visibleEvents.flatMap((event) => renderEvent(event, traceStart, traceDuration)),
     ],
-    ...(visibleEvents.length < profile.events.length
+    ...(visibleEvents.length < matchingEvents.length
       ? [
           [
             noticeNode,
             text(
-              `Showing the first ${visibleEvents.length.toLocaleString()} events. The full trace contains ${profile.events.length.toLocaleString()}.`,
+              `Showing the first ${visibleEvents.length.toLocaleString()} events. ${matchingEvents.length.toLocaleString()} events match the current filter.`,
             ),
           ],
         ]
@@ -123,10 +150,15 @@ export const createInstanceWithDependencies = async (
   const uri = typeof context?.uri === 'string' ? context.uri : ''
   const content = await dependencies.readFile(uri)
   const profile = await dependencies.parse(content)
+  let filter = ''
   return {
     dispose(): void {},
-    handleEvent(_event: Readonly<ViewEvent>): void {},
-    render: () => render(profile),
+    handleEvent(event: Readonly<ViewEvent>): void {
+      if (event.type === 'input' && event.name === 'filter' && typeof event.value === 'string') {
+        filter = event.value
+      }
+    },
+    render: () => render(profile, filter),
     saveState: () => ({ uri }),
   }
 }
