@@ -82,6 +82,20 @@ const renderEvent = (event: PerformanceProfileEvent, traceStart: number, traceDu
   ]
 }
 
+const renderEventGroups = (
+  events: readonly PerformanceProfileEvent[],
+  traceStart: number,
+  traceDuration: number,
+): VirtualDomNode[] => {
+  const nodes: VirtualDomNode[] = []
+  for (let start = 0; start < events.length; start += 100) {
+    const group = events.slice(start, start + 100)
+    nodes.push({ childCount: group.length, className: 'PerformanceProfileEventGroup', type: VirtualDomElements.Div })
+    nodes.push(...group.flatMap((event) => renderEvent(event, traceStart, traceDuration)))
+  }
+  return nodes
+}
+
 const render = (profile: PerformanceProfile, filter: string): readonly VirtualDomNode[] => {
   const query = filter.toLowerCase()
   const matchingEvents = query
@@ -123,8 +137,12 @@ const render = (profile: PerformanceProfile, filter: string): readonly VirtualDo
         ]
       : []),
     [
-      { childCount: visibleEvents.length, className: 'PerformanceProfileEventList', type: VirtualDomElements.Div },
-      ...visibleEvents.flatMap((event) => renderEvent(event, traceStart, traceDuration)),
+      {
+        childCount: Math.ceil(visibleEvents.length / 100),
+        className: 'PerformanceProfileEventList',
+        type: VirtualDomElements.Div,
+      },
+      ...renderEventGroups(visibleEvents, traceStart, traceDuration),
     ],
     ...(visibleEvents.length < matchingEvents.length
       ? [

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-deprecated */
 import type { Test } from '@lvce-editor/test-with-playwright'
 import { openTrace } from './_performanceProfileTestUtils.ts'
 
@@ -14,16 +13,25 @@ export const test: Test = async (api) => {
       traceEvents: [...events, { args: { data: { url: source } }, dur: 981, name: 'FunctionCall', ph: 'X', ts: 6000 }],
     }),
   )
-  const filter = api.Locator('.PerformanceProfileFilter')
-  await filter.type('ESLINT')
+  const states = (await api.Command.execute('Viewlet.getAllStates')) as Record<
+    string,
+    { readonly uid: number; readonly viewId?: string }
+  >
+  const view = Object.values(states).find(({ viewId }) => viewId === 'builtin.performance-profile-view')
+  if (!view) {
+    throw new Error('Performance profile view was not created')
+  }
+  const filter = (value: string): Promise<unknown> =>
+    api.Command.execute('Viewlet.executeViewletCommand', view.uid, 'handleInput', 'filter', value)
+  await filter('ESLINT')
   await api.expect(api.Locator('.PerformanceProfileFilterStatus')).toContainText('1 matching events')
   await api.expect(api.Locator('.PerformanceProfileEvent')).toHaveCount(1)
   await api.expect(api.Locator('.PerformanceProfileEventDetail')).toContainText(source)
   await api.expect(api.Locator('.PerformanceProfileEventDuration')).toHaveText('0.98 ms')
-  await filter.type('no matching worker')
+  await filter('no matching worker')
   await api.expect(api.Locator('.PerformanceProfileFilterStatus')).toContainText('0 matching events')
   await api.expect(api.Locator('.PerformanceProfileEvent')).toHaveCount(0)
-  await filter.type('')
+  await filter('')
   await api.expect(api.Locator('.PerformanceProfileNotice')).toContainText('first 5,000 events')
   await api.expect(api.Locator('.PerformanceProfileEvent')).toHaveCount(5000)
 }
