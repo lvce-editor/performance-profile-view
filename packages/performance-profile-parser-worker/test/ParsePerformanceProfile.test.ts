@@ -65,3 +65,14 @@ test('keeps large event streams in timestamp order', () => {
   expect(profile.events).toHaveLength(20_000)
   expect(profile.events[0]?.name).toBe('event 19999')
 })
+
+test('preserves Chromium function-call source URLs with generic worker names', () => {
+  const source = 'lvce-oss://-/extensions/builtin.eslint/dist/eslintEvaluationWorkerMain.js'
+  const profile = parsePerformanceProfile(
+    JSON.stringify([
+      { args: { name: 'DedicatedWorker thread' }, name: 'thread_name', ph: 'M', pid: 1, tid: 2 },
+      { args: { data: { url: source } }, dur: 981, name: 'FunctionCall', ph: 'X', pid: 1, tid: 2, ts: 10 },
+    ]),
+  )
+  expect(profile.events[0]).toMatchObject({ duration: 981, source, threadName: 'DedicatedWorker thread' })
+})

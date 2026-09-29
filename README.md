@@ -4,7 +4,7 @@ Performance Profile View opens Chromium trace-event files inside LVCE Editor. Us
 
 ## Supported trace data
 
-The viewer reads either a Chromium trace object with a `traceEvents` array or a bare array of trace events. It displays complete (`X`), begin/end (`B`/`E`), and instant (`i`/`I`) events. Chromium process and thread name metadata supplies readable row labels. Event timestamps and durations use Chromium's microsecond units and are shown as milliseconds.
+The viewer reads either a Chromium trace object with a `traceEvents` array or a bare array of trace events. It displays complete (`X`), begin/end (`B`/`E`), and instant (`i`/`I`) events. Chromium process and thread name metadata supplies readable row labels. Function-call source URLs identify worker scripts even when Chromium uses a generic thread name. Use the filter to search event names, categories, workers, and source URLs across the entire trace, including events beyond the first 5,000 rows. Event timestamps and durations use Chromium's microsecond units and are shown as milliseconds.
 
 Metadata and unsupported event phases are omitted. Invalid JSON, invalid event records, empty traces, and traces without supported timeline events show a parse error in the editor. Large traces are parsed in a worker; the view renders at most 5,000 events at a time to keep the editor responsive and states when the display is truncated.
 

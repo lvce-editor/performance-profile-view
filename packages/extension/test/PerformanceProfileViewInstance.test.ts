@@ -69,4 +69,16 @@ test('bounds DOM rendering for large traces and supports a missing URI', async (
   expect(
     nodes.some((node) => 'text' in node && typeof node.text === 'string' && node.text.includes('first 5,000 events')),
   ).toBe(true)
+  instance.handleEvent?.({ name: 'filter', type: 'input', value: 'EVENT 5000' })
+  const filtered = instance.render()
+  expect(filtered.filter((node) => 'className' in node && node.className === 'PerformanceProfileEvent')).toHaveLength(1)
+  expect(filtered.some((node) => 'text' in node && node.text === 'event 5000')).toBe(true)
+  instance.handleEvent?.({ name: 'filter', type: 'input', value: 'no matching event' })
+  expect(
+    instance.render().filter((node) => 'className' in node && node.className === 'PerformanceProfileEvent'),
+  ).toHaveLength(0)
+  instance.handleEvent?.({ name: 'filter', type: 'input', value: '' })
+  expect(
+    instance.render().filter((node) => 'className' in node && node.className === 'PerformanceProfileEvent'),
+  ).toHaveLength(5000)
 })
