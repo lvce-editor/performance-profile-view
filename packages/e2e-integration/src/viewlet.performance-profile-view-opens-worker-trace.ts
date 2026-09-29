@@ -4,7 +4,7 @@ export const name = 'viewlet.performance-profile-view-opens-worker-trace'
 
 export const test: Test = async ({ Command, expect, FileSystem, Locator: locate }) => {
   const directory = await FileSystem.getTmpDir()
-  const uri = `${directory}/eslint.trace`
+  const uri = `${directory}/.org.chromium.Chromium.recording`
   await FileSystem.writeFile(
     uri,
     JSON.stringify({
@@ -34,7 +34,11 @@ export const test: Test = async ({ Command, expect, FileSystem, Locator: locate 
       ],
     }),
   )
-  await Command.execute('Main.openUri', uri, true, { opener: 'builtin.performance-profile-view' })
+  await Command.execute('Main.openInput', {
+    args: [{ opener: 'builtin.performance-profile-view' }],
+    editorInput: { providerId: 'builtin.performance-profile-view', type: 'webview', uri },
+    focus: true,
+  })
 
   await expect(locate('.PerformanceProfileView')).toBeVisible()
   await expect(locate('.PerformanceProfileSummary')).toContainText('1 events')
