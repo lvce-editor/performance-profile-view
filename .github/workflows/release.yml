@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npm run type-check
+      - name: Rename archive
+        shell: bash
+        run: mv extension.tar.br "performance-profile-view-${GITHUB_REF_NAME}.tar.br"
+      - name: Publish release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "$GITHUB_REF_NAME" "performance-profile-view-${GITHUB_REF_NAME}.tar.br" --generate-notes --title "$GITHUB_REF_NAME"

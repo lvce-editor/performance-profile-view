@@ -1,0 +1,32 @@
+{
+  "id": "builtin.performance-profile-view",
+  "name": "Performance Profile View",
+  "workerName": "Performance Profile View Extension Worker",
+  "description": "Inspect Chromium performance traces",
+  "repository": "https://github.com/lvce-editor/performance-profile-view",
+  "browser": "dist/performanceProfileViewMain.js",
+  "isolated": true,
+  "contentSecurityPolicy": ["default-src 'none'", "script-src 'self'"],
+  "rpc": [
+    {
+      "id": "builtin.performance-profile-view.parser-worker",
+      "type": "web-worker",
+      "name": "Performance Profile Parser Worker",
+      "url": "dist/performanceProfileParserWorkerMain.js",
+      "contentSecurityPolicy": ["default-src 'none'", "script-src 'self'"]
+    }
+  ],
+  "activation": ["onView:builtin.performance-profile-view"],
+  "languages": ["json"],
+  "views": [
+    {
+      "id": "builtin.performance-profile-view",
+      "title": "Performance Profile",
+      "kind": "virtualDom",
+      "type": "preview",
+      "css": "media/index.css",
+      "selector": [".json", ".trace"],
+      "showSideBarHeader": false
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+.PerformanceProfileView {
+  contain: strict;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  color: var(--EditorForeground, inherit);
+  background: var(--EditorBackground, transparent);
+  font-family: var(--EditorFontFamily, sans-serif);
+  font-size: 13px;
+}
+
+.PerformanceProfileSummary {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--PanelBorder, rgba(128, 128, 128, 0.35));
+  background: var(--EditorBackground, transparent);
+  font-weight: 600;
+}
+
+.PerformanceProfileNotice {
+  padding: 8px 16px;
+  color: var(--DescriptionForeground, rgba(128, 128, 128, 1));
+}
+
+.PerformanceProfileEvent {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(220px, 1.5fr) minmax(120px, 1fr) 110px 100px;
+  min-height: 28px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--PanelBorder, rgba(128, 128, 128, 0.16));
+}
+
+.PerformanceProfileEvent:where(:hover) {
+  background: var(--ListHoverBackground, rgba(128, 128, 128, 0.18));
+}
+
+.PerformanceProfileEventName,
+.PerformanceProfileEventDetail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.PerformanceProfileEventName {
+  font-family: var(--EditorFontFamily, monospace);
+}
+
+.PerformanceProfileEventTrack {
+  width: 100%;
+  height: 10px;
+  overflow: visible;
+}
+
+.PerformanceProfileEventBar {
+  fill: var(--FocusBorder, #4b9fea);
+}
+
+.PerformanceProfileEventDetail,
+.PerformanceProfileEventStart,
+.PerformanceProfileEventDuration {
+  color: var(--DescriptionForeground, rgba(128, 128, 128, 1));
+}
+
+.PerformanceProfileEventStart,
+.PerformanceProfileEventDuration {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 700px) {
+  .PerformanceProfileEvent {
+    grid-template-columns: minmax(140px, 1fr) minmax(80px, 1fr) 100px 90px;
+  }
+
+  .PerformanceProfileEventDetail {
+    display: none;
+  }
+}

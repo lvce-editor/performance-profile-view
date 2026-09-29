@@ -1,0 +1,8 @@
+.tmp
+.vscode
+coverage
+dist
+extension.tar.br
+node_modules
+*.log
+*.tsbuildinfo

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "exclude": ["exports", "types"],
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/build.ts", "scripts/computeNodeModulesCacheKey.ts"],
+      "project": ["scripts/**/*.ts"]
+    },
+    "packages/build": {
+      "project": ["src/**/*.ts"]
+    },
+    "packages/performance-profile-parser-worker": {
+      "entry": ["src/performanceProfileParserWorkerMain.ts", "test/**/*.test.ts"],
+      "project": ["src/**/*.ts", "test/**/*.ts"]
+    },
+    "packages/e2e": {
+      "entry": ["src/**/*.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/extension": {
+      "entry": ["src/performanceProfileViewMain.ts", "test/**/*.test.ts"],
+      "project": ["src/**/*.ts", "test/**/*.ts"]
+    },
+    "packages/server": {
+      "ignoreDependencies": ["@lvce-editor/server"],
+      "project": ["src/**/*.js"]
+    }
+  }
+}

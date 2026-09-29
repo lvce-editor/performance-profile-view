@@ -1,0 +1,9 @@
+{
+  "name": "performance-profile-view-server",
+  "version": "0.0.0-dev",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@lvce-editor/server": "0.104.2"
+  }
+}
