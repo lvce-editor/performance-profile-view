@@ -1,0 +1,4 @@
+{
+  "artifacts": [["dist", "extensions/builtin.performance-profile-view"]],
+  "scripts": []
+}
