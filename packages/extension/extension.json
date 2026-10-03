@@ -17,7 +17,6 @@
     }
   ],
   "activation": ["onView:builtin.performance-profile-view"],
-  "languages": ["json"],
   "views": [
     {
       "id": "builtin.performance-profile-view",
