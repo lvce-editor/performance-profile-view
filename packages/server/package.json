@@ -4,6 +4,6 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@lvce-editor/server": "0.118.23"
+    "@lvce-editor/server": "0.121.22"
   }
 }
